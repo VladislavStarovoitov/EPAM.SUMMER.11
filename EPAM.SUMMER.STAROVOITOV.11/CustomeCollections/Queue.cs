@@ -11,7 +11,7 @@ namespace CustomeCollections
     {
         private T[] _queue;
         private int _size = 0;
-        private int _tail = 0;
+        private int _tail = -1;
         private int _head = 0;
         private const int _lengthDelta = 1000;
         private static T[] _emptyArray = new T[0];
@@ -50,6 +50,30 @@ namespace CustomeCollections
             }
             else
                 throw new ArgumentOutOfRangeException();
+        }
+
+        public T Dequeue()
+        {
+            if (_size == 0)
+                throw new InvalidOperationException();
+
+            T item = _queue[_head];
+            _head++;
+            _size--;
+            if (_head > _tail)
+            {
+                _head = 0;
+                _tail = -1;
+            }
+            return item;
+        }
+
+        public T Peek()
+        {
+            if (_size == 0)
+                throw new InvalidOperationException();
+
+            return _queue[_head];
         }
 
         public IEnumerator<T> GetEnumerator()
