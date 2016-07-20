@@ -21,6 +21,15 @@ namespace CustomeCollections
             _queue = _emptyArray;
         }
 
+        public int Count => _size;
+
+        public T GetItem(int index)
+        {
+            if (_head + index > _tail)
+                throw new ArgumentOutOfRangeException();
+            return _queue[_head + index - 1];
+        }
+
         public void Enqueue(T item)
         {
             if (_size != int.MaxValue)
@@ -56,7 +65,7 @@ namespace CustomeCollections
         {
             if (_size == 0)
                 throw new InvalidOperationException();
-
+            
             T item = _queue[_head];
             _head++;
             _size--;
@@ -78,12 +87,55 @@ namespace CustomeCollections
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Enumerator(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
+        }
+
+        public struct Enumerator : IEnumerator<T>
+        {
+            private Queue<T> _localQueue;
+            private T _current;
+            private int _index;
+
+            public Enumerator(Queue<T> queue)
+            {
+                _localQueue = queue;
+                _index = -1;
+                _current = default(T);
+            }
+
+            public T Current
+            {
+                get
+                {
+                    if (_index == -1 || _index > _localQueue.Count - 1)
+                        throw new InvalidOperationException();
+                    return _current;
+                }
+            }
+
+            object IEnumerator.Current => (object)Current;
+
+            public bool MoveNext()
+            {
+                if (_index < _localQueue.Count - 1)
+                {
+                    _current = _localQueue.GetItem(++_index);
+                    return true;
+                }
+                return false;
+            }
+
+            public void Reset()
+            {
+                _index = -1;
+            }
+
+            public void Dispose() { }
         }
     }
 }
