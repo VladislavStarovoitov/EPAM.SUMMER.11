@@ -13,13 +13,17 @@ namespace CustomeCollections
 
         public int Count => _set.Count;
 
-        public Set(params T[] elements)
+        public Set() { }
+
+        public Set(params T[] elements): this((IEnumerable<T>)elements) { }
+
+        public Set(IEnumerable<T> elements)
         {
             if (ReferenceEquals(elements, null))
                 throw new ArgumentNullException(nameof(elements));
             foreach (var element in elements)
             {
-                this.Add(element);
+                Add(element);
             }
         }
 
@@ -37,6 +41,59 @@ namespace CustomeCollections
         public bool Remove(T item)
         {
             return _set.Remove(item);
+        }
+
+        public void UnionWith(IEnumerable<T> other)
+        {
+            if (ReferenceEquals(other, null))
+                throw new ArgumentNullException(nameof(other));
+            foreach (var element in other)
+            {
+                Add(element);
+            }
+        }
+
+        //just for fun
+        public void UnionWith(Dictionary<T, T> other)
+        {
+            var result = _set.Union(other).Select<KeyValuePair<T, T>, T>(element => element.Key);
+            var newSet = new Set<T>(result);
+            _set = newSet._set;
+        }
+
+        public void IntersectWith(IEnumerable<T> other)
+        {
+            if (ReferenceEquals(other, null))
+                throw new ArgumentNullException(nameof(other));
+
+            var result = _set.Keys.Intersect(other);
+            _set.Clear();
+            foreach (var element in result)
+            {
+                Add(element);
+            }
+        }
+
+        public void DifferenceWith(IEnumerable<T> other)
+        {
+            if (ReferenceEquals(other, null))
+                throw new ArgumentNullException(nameof(other));
+
+            var result = _set.Keys.Intersect(other);
+            foreach (var element in result)
+            {
+                Remove(element);
+            }
+        }
+
+        public bool Contains(T item)
+        {
+            return _set.ContainsKey(item);
+        }
+
+        public void Clear()
+        {
+            _set.Clear();
         }
 
         public IEnumerator<T> GetEnumerator()
