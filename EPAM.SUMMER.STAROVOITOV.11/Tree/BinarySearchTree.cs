@@ -26,13 +26,44 @@ namespace Tree
             }
         }
 
+        public BinarySearchTree(IComparer<T> comparer = null)
+        {
+            Comprer = comparer;
+        }
+
+        public BinarySearchTree(IEnumerable<T> items, IComparer<T> comparer) : this(comparer)
+        {
+            foreach (var item in items)
+            {
+                Add(item, _root);
+            }
+        }
+
+        public void Add(T item)
+        {
+            if (ReferenceEquals(item, null))
+                throw new ArgumentNullException();
+            Add(item, _root);
+        }
+
+        private void Add(T item, TreeNode node)
+        {
+            if (ReferenceEquals(node, null))
+                node = new TreeNode(item);
+            else
+                if (_comparer.Compare(item, node.Item) > 0)
+                    Add(item, node.Right);
+                else
+                    Add(item, node.Left);                    
+        }
+
         private sealed class TreeNode
         {
-            public TreeNode left { get; set; }
-            public TreeNode right { get; set; }
+            public TreeNode Left { get; set; }
+            public TreeNode Right { get; set; }
             public T Item { get; }            
 
-            TreeNode(T item)
+            public TreeNode(T item)
             {
                 Item = item;
             }
