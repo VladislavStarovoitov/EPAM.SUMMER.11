@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fibonacci.Tests", "Fibonacc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomeCollections", "CustomeCollections\CustomeCollections.csproj", "{E0545BE5-582D-4D9F-979A-0BF83E7BA764}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tree", "Tree\Tree.csproj", "{0D18CF9B-2732-4603-AD6B-B4F5E545199C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E0545BE5-582D-4D9F-979A-0BF83E7BA764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0545BE5-582D-4D9F-979A-0BF83E7BA764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0545BE5-582D-4D9F-979A-0BF83E7BA764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D18CF9B-2732-4603-AD6B-B4F5E545199C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D18CF9B-2732-4603-AD6B-B4F5E545199C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D18CF9B-2732-4603-AD6B-B4F5E545199C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D18CF9B-2732-4603-AD6B-B4F5E545199C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

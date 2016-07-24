@@ -52,8 +52,7 @@ namespace CustomeCollections
                 Add(element);
             }
         }
-
-        //just for fun
+        
         public void UnionWith(Dictionary<T, T> other)
         {
             var result = _set.Union(other).Select<KeyValuePair<T, T>, T>(element => element.Key);
