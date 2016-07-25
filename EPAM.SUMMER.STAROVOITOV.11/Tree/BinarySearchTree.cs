@@ -62,6 +62,11 @@ namespace Tree
             return Remove(item, _root);
         }
 
+        public bool Contains(T item)
+        {
+
+        }
+
         private bool Remove(T item, TreeNode node)
         {
             if (!ReferenceEquals(node, null))
@@ -72,23 +77,36 @@ namespace Tree
             if (_comparer.Compare(item, node.Item) < 0)
                 return Remove(item, node.Left);
 
-            //if (_comparer.Compare(item, node.Parent.Item) > 0)
-            //    if (ReferenceEquals(node.)) todo
-            //    node.Parent = node.Left;
-            //else
-            //{
-            //    if (ReferenceEquals(node.Left, null))
-            //        node.Parent = node.Right;
-            //    else
-            //    {
-            //        TreeNode rightestNode = node.Left;
-            //        while (ReferenceEquals(rightestNode, null))
-            //            rightestNode = node.Right;
-            //        rightestNode.Parent = rightestNode.Left;
-            //        rightestNode.Left = node.Left;
-            //        node.Parent = rightestNode;
-            //    }
-            //}
+            TreeNode temp = null;            
+            if (ReferenceEquals(node.Right, null))
+                temp = node.Left;
+            else
+            {
+                if (ReferenceEquals(node.Right, null))
+                    temp = node.Left;
+                else
+                {
+                    TreeNode rightestNodeInLeft = node.Left;
+                    temp = rightestNodeInLeft;
+                    while (ReferenceEquals(rightestNodeInLeft.Right, null))
+                    {
+                        temp = rightestNodeInLeft;
+                        rightestNodeInLeft = rightestNodeInLeft.Right;
+                    }
+                    if (!ReferenceEquals(temp, node.Left))
+                    {
+                        temp.Parent.Right = temp.Left;
+                    }
+                    else
+                        node.Left = temp.Left;
+                }
+            }
+            temp.Left = node.Left;
+            temp.Right = node.Right;
+            if (_comparer.Compare(item, node.Parent.Item) > 0)
+                node.Parent.Right = temp;
+            else
+                node.Parent.Left = temp;
             return true; 
         }
 
@@ -97,9 +115,9 @@ namespace Tree
             if (ReferenceEquals(node, null))
             {
                 var newNode = new TreeNode(item, parent);
-                if (_comparer.Compare(item, node.Item) > 0)
+                if (_comparer.Compare(item, parent.Item) > 0)
                     parent.Right = newNode;
-                if (_comparer.Compare(item, node.Item) < 0)
+                if (_comparer.Compare(item, parent.Item) < 0)
                     parent.Left = newNode;
             }
             else
