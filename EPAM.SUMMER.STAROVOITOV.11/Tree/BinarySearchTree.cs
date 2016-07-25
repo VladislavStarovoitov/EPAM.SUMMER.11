@@ -64,7 +64,22 @@ namespace Tree
 
         public bool Contains(T item)
         {
+            if (ReferenceEquals(item, null))
+                throw new ArgumentNullException();
 
+            return Contains(item, _root);
+        }
+
+        private bool Contains(T iten, TreeNode node)
+        {
+            if (ReferenceEquals(node, null))
+                return false;
+
+            if (_comparer.Compare(iten, node.Item) > 0)
+                return Contains(iten, node.Right);
+            if (_comparer.Compare(iten, node.Item) < 0)
+                return Contains(iten, node.Left);
+            return true;
         }
 
         private bool Remove(T item, TreeNode node)
