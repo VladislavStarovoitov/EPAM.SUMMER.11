@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tree
 {
-    public sealed class BinarySearchTree<T>
+    public sealed class BinarySearchTree<T> : IEnumerable<T>
     {
         private IComparer<T> _comparer;
         private TreeNode _root;
@@ -31,7 +32,15 @@ namespace Tree
             Comprer = comparer;
         }
 
-        public BinarySearchTree(IEnumerable<T> items, IComparer<T> comparer) : this(comparer)
+        public BinarySearchTree(IComparer<T> comparer, params T[] items) : this(comparer)
+        {
+            foreach (var item in items)
+            {
+                Add(item);
+            }
+        }
+
+        public BinarySearchTree(IComparer<T> comparer, IEnumerable<T> items) : this(comparer)
         {
             foreach (var item in items)
             {
@@ -70,6 +79,66 @@ namespace Tree
             return Contains(item, _root);
         }
 
+        public IEnumerable<T> InfixTraverse() => InfixTraverse(_root);
+
+        public IEnumerable<T> PrefixTraverse() => PrefixTraverse(_root);
+
+        public IEnumerable<T> PostfixTraverse() => PostfixTraverse(_root);        
+
+        public IEnumerator<T> GetEnumerator() => InfixTraverse(_root).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #region TRAVERSE
+        private IEnumerable<T> PostfixTraverse(TreeNode node)
+        {
+            if (node == null) yield break;
+            foreach (var item in PostfixTraverse(node.Left))
+            {
+                yield return item;
+            }
+
+            foreach (var item in PostfixTraverse(node.Right))
+            {
+                yield return item;
+            }
+
+            yield return node.Item;
+        }
+
+        private IEnumerable<T> PrefixTraverse(TreeNode node)
+        {
+            if (node == null) yield break;
+            yield return node.Item;
+
+            foreach (var item in PrefixTraverse(node.Left))
+            {
+                yield return item;
+            }
+
+            foreach (var item in PrefixTraverse(node.Right))
+            {
+                yield return item;
+            }
+        }
+
+        private IEnumerable<T> InfixTraverse(TreeNode node)
+        {
+            if (node == null) yield break;
+            foreach (var item in InfixTraverse(node.Left))
+            {
+                yield return item;
+            }
+
+            yield return node.Item;
+
+            foreach (var item in InfixTraverse(node.Right))
+            {
+                yield return item;
+            }
+        }
+        #endregion
+
         private bool Contains(T iten, TreeNode node)
         {
             if (ReferenceEquals(node, null))
@@ -84,7 +153,7 @@ namespace Tree
 
         private bool Remove(T item, TreeNode node)
         {
-            if (!ReferenceEquals(node, null))
+            if (ReferenceEquals(node, null))
                 return false;
 
             if (_comparer.Compare(item, node.Item) > 0) 
@@ -97,16 +166,16 @@ namespace Tree
                 temp = node.Left;
             else
             {
-                if (ReferenceEquals(node.Right, null))
-                    temp = node.Left;
+                if (ReferenceEquals(node.Left, null))
+                    temp = node.Right;
                 else
                 {
                     TreeNode rightestNodeInLeft = node.Left;
                     temp = rightestNodeInLeft;
-                    while (ReferenceEquals(rightestNodeInLeft.Right, null))
+                    while (!ReferenceEquals(rightestNodeInLeft.Right, null))
                     {
-                        temp = rightestNodeInLeft;
                         rightestNodeInLeft = rightestNodeInLeft.Right;
+                        temp = rightestNodeInLeft;
                     }
                     if (!ReferenceEquals(temp, node.Left))
                     {
@@ -114,14 +183,25 @@ namespace Tree
                     }
                     else
                         node.Left = temp.Left;
+                    if (!ReferenceEquals(temp.Left, null))
+                        temp.Left.Parent = temp.Parent;
+                    node.Item = temp.Item;
+                    return true;
                 }
             }
-            temp.Left = node.Left;
-            temp.Right = node.Right;
-            if (_comparer.Compare(item, node.Parent.Item) > 0)
-                node.Parent.Right = temp;
+            if (!ReferenceEquals(node.Parent, null))
+            {
+                if (_comparer.Compare(item, node.Parent.Item) > 0)
+                    node.Parent.Right = temp;
+                else
+                    node.Parent.Left = temp;
+            }
             else
-                node.Parent.Left = temp;
+                _root = temp;
+            if (!ReferenceEquals(temp, null))
+            {
+                temp.Parent = node.Parent;
+            }
             return true; 
         }
 
@@ -148,7 +228,7 @@ namespace Tree
             public TreeNode Right { get; set; }
             public TreeNode Parent { get; set; }
 
-            public T Item { get; }            
+            public T Item { get; set; }            
 
             public TreeNode(T item, TreeNode parent)
             {
